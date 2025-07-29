@@ -21,6 +21,7 @@ pipeline {
                 echo 'Run your build here...'
             }
         }
+        
         stage('Test') {
             steps {
                 echo 'Run your tests here...'
