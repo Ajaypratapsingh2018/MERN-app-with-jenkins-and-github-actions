@@ -1,1 +1,29 @@
+pipeline {
+    agent any
 
+    stages {
+        stage('Clone') {
+            steps {
+  checkout([
+    $class: 'GitSCM',
+    branches: [[name: '*/develop']],
+    userRemoteConfigs: [[
+      url: 'https://github.com/Ajaypratapsingh2018/MERN-app-with-jenkins-and-github-actions.git',
+      credentialsId: 'Jenkins-server'
+    ]]
+  ])
+}
+
+        }
+        stage('Build') {
+            steps {
+                echo 'Run your build here...'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Run your tests here...'
+            }
+        }
+    }
+}
