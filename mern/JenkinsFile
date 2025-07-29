@@ -4,6 +4,7 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
+                 git branch: 'develop',
                 git credentialsId: 'Jenkins-server', url: 'https://github.com/Ajaypratapsingh2018/MERN-app-with-jenkins-and-github-actions.git'
             }
         }
