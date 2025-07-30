@@ -1,44 +1,44 @@
-name: Build MERN App
+name: Build MERN app
 on:
   pull_request:
     branches: [main]
-    types: [opened, synchronize]
+    types: [opened]
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  Build:
+    runs-on: ubuntu-22.04
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    - name: Install frontend dependencies
-      run: |
-        cd frontend
-        npm install
-    - name: Run frontend lint and tests
-      run: |
-        cd frontend
-        npm run lint
-        npm run test
-    - name: Build frontend
-      run: |
-        cd frontend
-        npm run build
-    - name: Install backend dependencies
-      run: |
-        cd backend
-        npm install
-    - name: Run backend tests
-      run: |
-        cd backend
-        npm run test
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-    - name: Build frontend Docker image
-      run: |
-        docker build -t <your-docker-username>/react-app:test ./frontend
-    - name: Build backend Docker image
-      run: |
-        docker build -t <your-docker-username>/node-backend:test ./backend
+      - name: Checkout SCM
+        uses: actions/Checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+      - name: Run frontend lint and tests
+        run: |
+          cd frontend
+          npm run lint
+          npm run test
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm install
+      - name: Run backend tests
+        run: |
+          cd backend
+          npm run test
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build frontend Docker image
+        run: |
+          docker build -t <your-docker-username>/react-app:test ./frontend
+      - name: Build backend Docker image
+        run: |
+          docker build -t <your-docker-username>/node-backend:test ./backend
