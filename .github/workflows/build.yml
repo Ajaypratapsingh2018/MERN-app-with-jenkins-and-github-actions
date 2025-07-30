@@ -1,8 +1,13 @@
 name: Build MERN app
 on:
+  push:
+    branches:
+      - develop
+      - main
   pull_request:
-    branches: [main]
-    types: [opened]
+    branches:
+      - main
+    types: [opened, synchronize]
 jobs:
   Build:
     runs-on: ubuntu-22.04
