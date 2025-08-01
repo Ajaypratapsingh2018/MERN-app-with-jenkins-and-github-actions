@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import React from "react";
+import PropTypes from "prop-types";
 
+
+RecordList.propTypes = {
+  record: PropTypes.shape({
+    name: PropTypes.string,
+    position: PropTypes.string,
+    level: PropTypes.string,
+    _id: PropTypes.string,
+  }),
+  deleteRecord: PropTypes.func,
+};
 const Record = (props) => (
   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">

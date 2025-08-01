@@ -17,4 +17,19 @@ module.exports = {
       { allowConstantExport: true },
     ],
   },
+  overrides: [
+    {
+      files: ["cypress/**/*.js"],
+      env: {
+        "cypress/globals": true
+      },
+      plugins: ["cypress"]
+    },
+    {
+      files: ["cypress/plugins/*.js"],
+      env: {
+        node: true
+      }
+    }
+  ]
 }
