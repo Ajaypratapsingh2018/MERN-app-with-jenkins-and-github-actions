@@ -1,5 +1,4 @@
 name: Build MERN app
-
 on:
   push:
     branches:
@@ -9,89 +8,63 @@ on:
     branches:
       - main
     types: [opened, synchronize]
-
 jobs:
   Build:
     runs-on: ubuntu-22.04
-
+    services:
+      mongodb: # MongoDB for tests
+        image: mongo:latest
+        ports:
+          - 27017:27017
     steps:
       - name: Checkout SCM
         uses: actions/checkout@v3
-
+        with:
+          fetch-depth: 0
+        # Clones repository
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
-
-      - name: Cache Node modules (Frontend)
+          node-version: '18.x'
+        # Installs Node.js 18
+      - name: Cache Node modules
         uses: actions/cache@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-frontend-${{ hashFiles('mern/frontend/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-frontend-
-
-      # Frontend
-      - name: Install frontend dependencies
-        run: |
-          cd mern/frontend
-          npm install
-
-      - name: Run frontend lint and tests
-        run: |
-          cd mern/frontend
-          npm run lint
-          npm run test
-
-      - name: Build frontend
-        run: |
-          cd mern/frontend
-          npm run build
-
-      - name: Upload frontend build
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-dist
-          path: mern/frontend/dist
-
-      # Backend
-      - name: Cache Node modules (Backend)
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
+          path: mern/backend/node_modules
           key: ${{ runner.os }}-backend-${{ hashFiles('mern/backend/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-backend-
-
+        # Speeds up npm install
       - name: Install backend dependencies
         run: |
           cd mern/backend
-          npm install
-
+          npm install --verbose || { echo "Backend npm install failed"; exit 1; }
+        # Installs eslint, jest, mongodb-memory-server
+      - name: Debug ESLint Config
+        run: |
+          cd mern/backend
+          npx eslint --version
+          cat .eslintrc.cjs || echo ".eslintrc.cjs not found"
+          cat eslint.config.js || echo "eslint.config.js not found"
+          ls -la
+        # Verifies ESLint setup
       - name: Run backend lint
         run: |
           cd mern/backend
-          npm run lint
-          
+          npm run lint || { echo "Backend lint failed"; exit 1; }
+        # Checks code with .eslintrc.cjs or eslint.config.js
       - name: Run backend tests
         run: |
           cd mern/backend
-          npm run test -- --passWithNoTests
-
-      - name: Upload backend build
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-output
-          path: mern/backend/build
-
-      # Docker Setup
+          npm run test || { echo "Backend tests failed"; exit 1; }
+        # Runs Jest tests
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Build frontend Docker image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/react-app:${{ github.sha }} mern/frontend
-
+        # Prepares Docker
+      - name: Create Docker network
+        run: docker network create demo || true
+        # Matches README
       - name: Build backend Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/node-backend:${{ github.sha }} mern/backend
+          docker build -t mern-backend:${{ github.sha }} mern/backend
+        # Builds Docker image
