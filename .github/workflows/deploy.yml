@@ -27,15 +27,15 @@ jobs:
     - name: Build and push frontend
       uses: docker/build-push-action@v3
       with:
-        context: ./frontend
+        context: ./mern/frontend
         push: true
-        tags: <your-docker-username>/react-app:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/frontend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}
     - name: Build and push backend
       uses: docker/build-push-action@v3
       with:
-        context: ./backend
+        context: ./mern/backend
         push: true
-        tags: <your-docker-username>/node-backend:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/node-backend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
       with:

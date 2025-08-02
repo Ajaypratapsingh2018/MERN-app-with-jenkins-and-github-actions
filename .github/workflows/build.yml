@@ -81,8 +81,8 @@ jobs:
   
       - name: Build backend Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME}}/mern-backend:${{ github.sha }} mern/backend
+          docker build -t ${{ secrets.DOCKER_USERNAME}}/node-backend:${{ github.sha }} mern/backend
         # Builds Docker image
       - name: Build frontend Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME}}/mern-frontend:${{ github.sha }} mern/frontend
+          docker build -t ${{ secrets.DOCKER_USERNAME}}/frontend:${{ github.sha }} mern/frontend
