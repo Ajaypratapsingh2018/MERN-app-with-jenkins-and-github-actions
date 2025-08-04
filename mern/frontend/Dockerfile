@@ -1,8 +1,14 @@
 FROM node:18
+
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+
+COPY package.json package-lock.json ./
+
+# Clean up problematic native bindings
+RUN rm -rf node_modules package-lock.json && npm install
+
 COPY . .
-RUN npm run build
+
 EXPOSE 5173
-CMD ["npm", "run", "dev"]
+
+CMD [ "npm", "run", "dev" ]
