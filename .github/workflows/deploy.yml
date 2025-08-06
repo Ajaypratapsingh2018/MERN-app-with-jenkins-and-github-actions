@@ -81,7 +81,7 @@ jobs:
           token: ${{ secrets.K8S_MANIFEST }}
           path: deployment-manifests
 
-      # Update Image Tags in Deployment YAMLs
+      # Update Image Tags in Deployment YAML
       - name: Update image tags
         run: |
           sed -i -E "s|^( *image: ).*|\1iamvegetaaj/frontend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}|g" deployment-manifests/manifests/frontend-deployment.yml
