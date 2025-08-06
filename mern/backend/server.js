@@ -1,6 +1,8 @@
+// server.js
 import express from 'express';
 import cors from 'cors';
-import records from './routes/record.js';
+import connectDB from './db/connection.js';
+import recordRoutes from './routes/record.js';
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -9,15 +11,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use('/record', records);
+// Connect to MongoDB
+connectDB()
+  .then((db) => {
+    app.locals.db = db;
 
-// Root route for testing
-app.get('/', (req, res) => {
-  res.send(' Backend is running on port ' + PORT);
-});
+    // Routes
+    app.use('/record', recordRoutes);
 
-// Start the Express server
-app.listen(PORT, () => {
-  console.log(` Server listening at http://localhost:${PORT}`);
-});
+    // Root route
+    app.get('/', (req, res) => {
+      res.send('Backend is running on port ' + PORT);
+    });
+
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`Server listening at http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('MongoDB connection failed, exiting...');
+    process.exit(1);
+  });

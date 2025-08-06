@@ -1,14 +1,21 @@
-FROM node:18
+## BUILDER stage
+FROM node:20-alpine as BUILDER
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-
-# Clean up problematic native bindings
-RUN rm -rf node_modules package-lock.json && npm install
+RUN npm ci
 
 COPY . .
 
-EXPOSE 5173
+RUN npm run build
 
-CMD [ "npm", "run", "dev" ]
+## RUNNER stage
+FROM nginx:alpine
+
+WORKDIR /app
+
+copy --from=BUILDER /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
