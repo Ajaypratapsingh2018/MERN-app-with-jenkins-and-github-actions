@@ -105,5 +105,5 @@ jobs:
           # Apply MongoDB Manifest
       - name: Apply MongoDB manifest
         run: |
-          kubectl apply -f deployment-manifests/manifests/mongo-deployment.yml
+          kubectl apply -f deployment-manifests/mongo-deployment.yml
 
