@@ -1,4 +1,6 @@
-# A simple MERN stack application 
+# MERN stack application 
+#This is repo is for purpose of deploying the applcation running CI/CD pipelines
+#deploying application to AKS and scaling in production
 
 ### Create a network for the docker containers
 
