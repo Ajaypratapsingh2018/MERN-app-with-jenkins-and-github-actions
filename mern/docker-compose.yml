@@ -1,33 +1,42 @@
+version: '3.8'
+
 services:
-  mongo:
+  mongodb:
     image: mongo:7.0.9-jammy
-    restart: always
+    container_name: mongodb
     ports:
-      - '27017:27017'
+      - "27017:27017"
+    networks:
+      - mern_network
     volumes:
       - mongo-data:/data/db
 
   backend:
     build: ./backend
+    container_name: backend
     ports:
-      - '5050:5050'
-    volumes:
-      - ./backend:/app
-      - /app/node_modules  # Prevent node_modules being overwritten
+      - "5050:5050"
+    networks:
+      - mern_network
     environment:
-      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongodb:27017/mydatabase
     depends_on:
-      - mongo
+      - mongodb
 
   frontend:
     build: ./frontend
+    container_name: frontend
     ports:
-      - '80:80'
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules  # Prevent node_modules being overwritten
+      - "80:80"
+    networks:
+      - mern_network
     environment:
-      - NODE_ENV=development
+      - REACT_APP_API_URL=http://backend:5050
+
+networks:
+  mern_network:
+    driver: bridge
 
 volumes:
   mongo-data:
+    driver: local
