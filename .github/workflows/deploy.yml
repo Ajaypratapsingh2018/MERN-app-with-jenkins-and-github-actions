@@ -84,10 +84,8 @@ jobs:
       # Update Image Tags in Deployment YAMLs
       - name: Update image tags
         run: |
-          # Use regex to replace existing tags in-place
-          sed -i -E "s|iamvegetaaj/frontend:.*|iamvegetaaj/frontend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}|g" deployment-manifests/manifests/frontend-deployment.yml
-          sed -i -E "s|iamvegetaaj/node-backend:.*|iamvegetaaj/node-backend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}|g" deployment-manifests/manifests/backend-deployment.yml
-
+          sed -i -E "s|^( *image: ).*|\1iamvegetaaj/frontend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}|g" deployment-manifests/manifests/frontend-deployment.yml
+          sed -i -E "s|^( *image: ).*|\1iamvegetaaj/node-backend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}|g" deployment-manifests/manifests/backend-deployment.yml
 
       - name: Commit and push updated image tags
         run: |
