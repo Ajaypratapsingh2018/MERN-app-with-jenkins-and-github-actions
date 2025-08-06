@@ -90,5 +90,5 @@ jobs:
       # Apply Updated Manifests to AKS
       - name: Apply manifests
         run: |
-          kubectl apply -f deployment-manifests/manifests/frontend-deployment.yaml
-          kubectl apply -f deployment-manifests/manifests/backend-deployment.yaml
+          kubectl apply -f deployment-manifests/manifests/frontend-deployment.yml
+          kubectl apply -f deployment-manifests/manifests/backend-deployment.yml
