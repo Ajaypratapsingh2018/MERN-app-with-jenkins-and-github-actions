@@ -3,51 +3,43 @@ on:
   push:
     branches:
       - develop
-      - main
   pull_request:
     branches:
-      - main
+      - develop
     types: [opened, synchronize]
 jobs:
   Build:
     runs-on: ubuntu-22.04
     services:
       mongodb: # MongoDB for tests
-        image: mongo:latest
+        image: bitnami/mongodb:6.0
         ports:
           - 27017:27017
     steps:
       - name: Checkout SCM
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-        # Clones repository
+        with: 
+          fetch-depth: 1
+      
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-        # Installs Node.js 18
       - name: Cache Node modules
+        id: cache-node-backend
         uses: actions/cache@v3
         with:
-          path: mern/backend/node_modules
-          key: ${{ runner.os }}-backend-${{ hashFiles('mern/backend/package-lock.json') }}
+          path: mern/backend/.npm
+          key: ${{ runner.os }}-backend-node-modules-${{ hashFiles('mern/backend/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-backend-
+            ${{ runner.os }}-backend-node-modules-
         # Speeds up npm install
       - name: Install backend dependencies
+        if: steps.cache-node-backend.outputs.cache-hit != 'true'
         run: |
           cd mern/backend
           npm install --verbose || { echo "Backend npm install failed"; exit 1; }
-        # Installs eslint, jest, mongodb-memory-server
-      - name: Debug ESLint Config
-        run: |
-          cd mern/backend
-          npx eslint --version
-          cat .eslintrc.cjs || echo ".eslintrc.cjs not found"
-          cat eslint.config.js || echo "eslint.config.js not found"
-          ls -la
-        # Verifies ESLint setup
+
       - name: Run backend lint
         run: |
           cd mern/backend
@@ -57,14 +49,40 @@ jobs:
         run: |
           cd mern/backend
           npm run test || { echo "Backend tests failed"; exit 1; }
+
+      - name: Cache frontend node_modules
+        id: cache-node-frontend
+        uses: actions/cache@v3
+        with:
+          path: mern/frontend/.npm
+          key: ${{ runner.os }}-frontend-node-modules-${{ hashFiles('mern/frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-node-modules-
+
+      - name: Install frontend dependencies
+        if: steps.cache-node-frontend.outputs.cache-hit != 'true'
+        run: |
+          cd mern/frontend
+          npm install --verbose || { echo "Frontend npm install failed"; exit 1; }
+
+      - name: Run frontend lint
+        run: |
+          cd mern/frontend
+          npm run lint || { echo "Frontend lint failed"; exit 1; }
+
+      - name: Run frontend tests
+        run: |
+          cd mern/frontend
+          npm run test || { echo "Frontend tests failed"; exit 1; }
+
         # Runs Jest tests
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-        # Prepares Docker
-      - name: Create Docker network
-        run: docker network create demo || true
-        # Matches README
+  
       - name: Build backend Docker image
         run: |
-          docker build -t mern-backend:${{ github.sha }} mern/backend
+          docker build -t ${{ secrets.DOCKER_USERNAME}}/node-backend:${{ github.sha }} mern/backend
         # Builds Docker image
+      - name: Build frontend Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME}}/frontend:${{ github.sha }} mern/frontend
