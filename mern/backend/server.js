@@ -1,35 +1,20 @@
-// server.js
-import express from 'express';
-import cors from 'cors';
-import connectDB from './db/connection.js';
-import recordRoutes from './routes/record.js';
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
 
-const PORT = process.env.PORT || 5050;
 const app = express();
+const PORT = process.env.PORT || 5050;
 
-// Middleware
-app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-connectDB()
-  .then((db) => {
-    app.locals.db = db;
+app.get('/health', (req, res) => res.send('OK'));
 
-    // Routes
-    app.use('/record', recordRoutes);
-
-    // Root route
-    app.get('/', (req, res) => {
-      res.send('Backend is running on port ' + PORT);
-    });
-
-    // Start server
-    app.listen(PORT, () => {
-      console.log(`Server listening at http://localhost:${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('MongoDB connection failed, exiting...');
-    process.exit(1);
-  });
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
+  console.log('MongoDB connected');
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}).catch((err) => {
+  console.error('MongoDB connection error:', err);
+});

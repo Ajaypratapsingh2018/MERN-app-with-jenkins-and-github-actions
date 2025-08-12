@@ -1,8 +1,8 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "Node.js, Express, and MongoDB REST CRUD API",
   "type": "module",
+  "description": "Node.js, Express, and MongoDB REST CRUD API",
   "main": "server.js",
   "scripts": {
     "dev": "vite --host",
@@ -16,8 +16,10 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
     "express": "^4.18.2",
-    "mongodb": "^6.3.0"
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.17.0"
   },
   "devDependencies": {
     "eslint": "^9.32.0",
