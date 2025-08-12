@@ -12,7 +12,7 @@ app.use(express.json());
 app.get('/health', (req, res) => res.send('OK'));
 
 mongoose
-  .connect(process.env.MONGO_URI, {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
