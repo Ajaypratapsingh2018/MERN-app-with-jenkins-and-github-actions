@@ -38,6 +38,8 @@ router.get('/:id', async (req, res) => {
 
 // POST a new record
 router.post('/', async (req, res) => {
+  console.log('POST / record called with:', req.body);  // <-- Added logging here
+
   try {
     const db = req.app.locals.db;
     const collection = db.collection('records');
