@@ -1,58 +1,25 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-
-// Load environment variables
-dotenv.config();
+import cors from 'cors';
+import connectDB from './db/connection.js';
+import recordRoutes from './routes/record.js';
+import healthRoutes from './routes/health.js';
 
 const app = express();
-const PORT = process.env.PORT || 5050;
-
-// Middleware to parse JSON
+app.use(cors());
 app.use(express.json());
 
-// Health check endpoint
-app.get('/health', (req, res) => res.status(200).send('OK'));
-
-// MongoDB connection with retry logic
-const connectWithRetry = () => {
-  console.log('Attempting MongoDB connection...');
-  console.log('MONGO_URI from env:', process.env.MONGO_URI); // Debug log
-
-  mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-    .then(() => {
-      console.log('MongoDB connected successfully');
-      startServer();
-    })
-    .catch((err) => {
-      console.error(`MongoDB connection failed: ${err.message}`);
-      console.log('Retrying in 5 seconds...');
-      setTimeout(connectWithRetry, 5000);
-    });
-};
-
-// Start Express server
-function startServer() {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-}
-
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  console.log('\nGracefully shutting down...');
-  await mongoose.connection.close();
-  process.exit(0);
+connectDB().then(db => {
+  app.locals.db = db;
+  console.log('Database instance stored in app.locals');
+}).catch(err => {
+  console.error('Error connecting to DB:', err);
+  process.exit(1);
 });
 
-process.on('SIGTERM', async () => {
-  console.log('\nReceived SIGTERM, closing connections...');
-  await mongoose.connection.close();
-  process.exit(0);
-});
+app.use('/api/records', recordRoutes);
+app.use('/health', healthRoutes);
 
-// Start the first connection attempt
-connectWithRetry();
+const port = process.env.PORT || 5050;
+app.listen(port, () => {
+  console.log(`Server is running on port: ${port}`);
+});
