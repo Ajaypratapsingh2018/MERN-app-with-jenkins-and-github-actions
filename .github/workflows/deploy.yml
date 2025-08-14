@@ -56,6 +56,7 @@ jobs:
           kubectl create secret generic backend-secrets \
             --from-literal=MONGODB_URI=${{ secrets.MONGODB_URI }} \
             --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Checkout deployment-manifests repo
         uses: actions/checkout@v3
         with:
