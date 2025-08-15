@@ -1,7 +1,6 @@
-// db/connection.js
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ServerApiVersion } from "mongodb";
 
-const URI = process.env.MONGODB_URI || "mongodb://mongodb:27017/mern";
+const URI = process.env.MONGODB_URI || "mongodb://mern-mongo:27017/employees";
 
 const client = new MongoClient(URI, {
   serverApi: {
@@ -11,16 +10,15 @@ const client = new MongoClient(URI, {
   },
 });
 
-async function connectDB() {
-  try {
-    await client.connect();
-    await client.db('admin').command({ ping: 1 });
-    console.log('MongoDB connected!');
-    return client.db('mern'); // matches your docker-compose DB
-  } catch (err) {
-    console.error('Failed to connect to MongoDB:', err);
-    throw err;
-  }
+try {
+  await client.connect();
+  await client.db().command({ ping: 1 });
+  console.log("MongoDB connected!");
+} catch (err) {
+  console.error("Failed to connect to MongoDB:", err);
 }
 
-export default connectDB;
+const dbName = process.env.MONGO_DB_NAME || "employees";
+let db = client.db(dbName);
+
+export default db;
