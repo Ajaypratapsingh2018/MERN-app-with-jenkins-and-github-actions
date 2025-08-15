@@ -86,7 +86,8 @@ jobs:
       - name: Update image tags
         run: |
           sed -i -E "s|iamvegetaaj/frontend:pr-[0-9]+-[a-f0-9]+|iamvegetaaj/frontend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}|g" deployment-manifests/manifests/frontend-deployment.yml
-          sed -i -E "s|iamvegetaaj/node-backend:pr-[0-9]+-[a-f0-9]+|iamvegetaaj/node-backend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}|g" deployment-manifests/manifests/backend.yml
+          sed -i -E "s|iamvegetaaj/node-backend:pr-[0-9]+-[a-f0-9]+|iamvegetaaj/node-backend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}|g" deployment-manifests/manifests/backend-deployment.yml
+
 
       - name: Commit and push updated image tags
         run: |
