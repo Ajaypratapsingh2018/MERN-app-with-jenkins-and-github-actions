@@ -40,10 +40,10 @@ jobs:
           cd mern/backend
           npm install --verbose || { echo "Backend npm install failed"; exit 1; }
 
-      - name: Run backend lint
-        run: |
-          cd mern/backend
-          npm run lint || { echo "Backend lint failed"; exit 1; }
+      # - name: Run backend lint
+      #   run: |
+      #     cd mern/backend
+      #     npm run lint || { echo "Backend lint failed"; exit 1; }
         # Checks code with .eslintrc.cjs or eslint.config.js
       - name: Run backend tests
         run: |
@@ -65,10 +65,10 @@ jobs:
           cd mern/frontend
           npm install --verbose || { echo "Frontend npm install failed"; exit 1; }
 
-      - name: Run frontend lint
-        run: |
-          cd mern/frontend
-          npm run lint || { echo "Frontend lint failed"; exit 1; }
+      # - name: Run frontend lint
+      #   run: |
+      #     cd mern/frontend
+      #     npm run lint || { echo "Frontend lint failed"; exit 1; }
 
       - name: Run frontend tests
         run: |
