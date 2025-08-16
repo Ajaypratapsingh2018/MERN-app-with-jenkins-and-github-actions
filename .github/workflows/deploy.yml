@@ -79,9 +79,7 @@ jobs:
         run: |
           ls -R deployment-manifests/manifests
           cat deployment-manifests/manifests/frontend-deployment.yml || echo "frontend-deployment.yml not found"
-          cat deployment-manifests/manifests/frontend-svc.yml || echo "frontend-svc.yml not found"
           cat deployment-manifests/manifests/backend-deployment.yml || echo "backend-deployment.yml not found"
-          cat deployment-manifests/manifests/backend-svc.yml || echo "backend-svc.yml not found"
           cat deployment-manifests/manifests/mongo-deployment.yml || echo "mongo-deployment.yml not found"
 
       - name: Update image tags
