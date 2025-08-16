@@ -80,13 +80,14 @@ jobs:
           ls -R deployment-manifests/manifests
           cat deployment-manifests/manifests/frontend-deployment.yml || echo "frontend-deployment.yml not found"
           cat deployment-manifests/manifests/frontend-svc.yml || echo "frontend-svc.yml not found"
-          cat deployment-manifests/manifests/backend.yml || echo "backend.yml not found"
+          cat deployment-manifests/manifests/backend-deployment.yml || echo "backend-deployment.yml not found"
+          cat deployment-manifests/manifests/backend-svc.yml || echo "backend-svc.yml not found"
           cat deployment-manifests/manifests/mongo-deployment.yml || echo "mongo-deployment.yml not found"
 
       - name: Update image tags
         run: |
           sed -i -E "s|iamvegetaaj/frontend:pr-[0-9]+-[a-f0-9]+|iamvegetaaj/frontend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}|g" deployment-manifests/manifests/frontend-deployment.yml
-          sed -i -E "s|iamvegetaaj/node-backend:pr-[0-9]+-[a-f0-9]+|iamvegetaaj/node-backend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}|g" deployment-manifests/manifests/backend.yml
+          sed -i -E "s|iamvegetaaj/node-backend:pr-[0-9]+-[a-f0-9]+|iamvegetaaj/node-backend:pr-${{ github.event.pull_request.number }}-${{ github.sha }}|g" deployment-manifests/manifests/backend-deployment.yml
 
       - name: Commit and push updated image tags
         run: |
@@ -100,8 +101,7 @@ jobs:
       - name: Apply manifests
         run: |
           kubectl apply -f deployment-manifests/manifests/frontend-deployment.yml || { echo "Failed to apply frontend-deployment.yml"; exit 1; }
-          kubectl apply -f deployment-manifests/manifests/frontend-svc.yml || { echo "Failed to apply frontend-svc.yml"; exit 1; }
-          kubectl apply -f deployment-manifests/manifests/backend.yml || { echo "Failed to apply backend.yml"; exit 1; }
+          kubectl apply -f deployment-manifests/manifests/backend-deployment.yml || { echo "Failed to apply backend-deployment.yml"; exit 1; }
           kubectl apply -f deployment-manifests/manifests/mongo-deployment.yml || { echo "Failed to apply mongo-deployment.yml"; exit 1; }
 
       - name: Verify deployment
