@@ -9,6 +9,9 @@ app.use(cors());
 app.use(express.json());
 app.use("/record", records);
 
+// For frontend compatibility
+app.use("/api/employees", records);
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
